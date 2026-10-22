@@ -23,12 +23,12 @@ It covers the full path from design to analysis: lookup tables, main tables, lin
 
 | File | Purpose |
 |---|---|
-| `sql/01_create_database.sql` | Creates the `TransportFleet` database (drops and recreates it if it exists) |
-| `sql/02_create_dictionary_tables.sql` | Creates the 7 dictionary (lookup) tables |
-| `sql/03_insert_dictionary_data.sql` | Fills the dictionaries |
-| `sql/04_create_main_tables.sql` | Creates the main tables and link tables |
-| `sql/05_insert_sample_data.sql` | Inserts sample drivers, vehicles, trailers, qualifications and orders |
-| `sql/06_business_queries.sql` | Business queries (read-only) |
+| `SQL/01_create_database.sql` | Creates the `TransportFleet` database (drops and recreates it if it exists) |
+| `SQL/02_create_dictionary_tables.sql` | Creates the 7 dictionary (lookup) tables |
+| `SQL/03_insert_dictionary_data.sql` | Fills the dictionaries |
+| `SQL/04_create_main_tables.sql` | Creates the main tables and link tables |
+| `SQL/05_insert_sample_data.sql` | Inserts sample drivers, vehicles, trailers, qualifications and orders |
+| `SQL/06_business_queries.sql` | Business queries (read-only) |
 | `docs/erd.png` | Entity relationship diagram |
 
 ## How to run
@@ -114,7 +114,7 @@ The data is made up and designed to cover different cases for the queries:
 
 Query 3 depends on the day it is run, because it uses the current date. The sample expiry dates are set around October 2026, so the exact result of that query changes over time.
 
-## Business queries (`sql/06_business_queries.sql`)
+## Business queries (`SQL/06_business_queries.sql`)
 
 | # | Question | Techniques |
 |---|---|---|

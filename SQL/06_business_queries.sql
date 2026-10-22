@@ -157,7 +157,7 @@ GO
 -- Uses UNION to combine requirements from OrderRequiredQualifications and TrailerTypeRequiredQualifications.
 -- Change @OrderId to check a different order.
 -- Test: order 5 (Tanker) adds ADR requirement; orders 6-8 (no trailer) yield the same result as 5b.
-DECLARE @OrderID INT = 5
+DECLARE @OrderID INT = 7
 DECLARE @DeliveryDate DATE = (
 -- Step 0: Fetch the delivery date of the target order to validate driver qualifications against it
 	SELECT o.DeliveryDate
@@ -186,7 +186,7 @@ SELECT
     d.LastName AS [Last Name],
     d.FirstName AS [First Name],
 -- Displays a fallback message if the order requires no qualifications at all
-    ISNULL(STRING_AGG(dq.DriverQualificationName, ', ') WITHIN GROUP (ORDER BY dq.DriverQualificationName), 'No qualifications needed.') AS [Qualifications]
+    ISNULL(STRING_AGG(dq.DriverQualificationName, ', ') WITHIN GROUP (ORDER BY dq.DriverQualificationName), N'No qualifications needed.') AS [Matched Qualifications]
 FROM dbo.Drivers AS d
 -- Step 3: Attach readable qualification names for matched and valid requirements only
 -- Pre-filters assignments to include only those required by this order and still active on the delivery date
@@ -203,9 +203,15 @@ LEFT JOIN (
 ) AS dq
     ON d.DriverID = dq.DriverID
 -- Step 4: Double NOT EXISTS pattern (Relational Division / Gap Detector)
+-- First, make sure the order exists; otherwise an unknown OrderID would return every driver
+WHERE EXISTS (
+    SELECT 1
+    FROM dbo.Orders AS o
+    WHERE o.OrderID = @OrderID
+)
 -- Ensures the driver has NO missing qualifications:
 -- "Select driver where there DOES NOT EXIST any required qualification..."
-WHERE NOT EXISTS (
+AND NOT EXISTS (
     SELECT 1
     FROM RequiredQualifications AS req
 -- "...for which the driver DOES NOT HAVE an active, valid assignment record"
@@ -218,5 +224,6 @@ WHERE NOT EXISTS (
     )
 )
 -- Step 5: Group by all non-aggregated columns required by STRING_AGG
-GROUP BY d.DriverID, d.LastName, d.FirstName;
+GROUP BY d.DriverID, d.LastName, d.FirstName
+ORDER BY d.LastName;
 GO
